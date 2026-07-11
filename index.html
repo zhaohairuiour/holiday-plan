@@ -37,6 +37,7 @@
             .tab-active { @apply bg-primary text-white; }
             .tab-inactive { @apply bg-gray-200 text-dark hover:bg-gray-300 transition-colors; }
             .locked-mask { @apply absolute inset-0 bg-gray-200/60 flex items-center justify-center z-10 rounded-lg; }
+            .btn-disabled { @apply opacity-50 pointer-events-none; }
         }
     </style>
 </head>
@@ -77,7 +78,7 @@
                         <h3 class="text-gray-500 text-sm font-medium">暑假周期</h3>
                         <p id="schedule-period" class="text-xl font-bold mt-1">2026年7月1日 - 2026年8月31日</p>
                     </div>
-                    <button id="edit-period" class="text-primary hover:text-primary/80 transition-colors edit-only">
+                    <button id="edit-period" class="text-primary hover:text-primary/80 transition-colors edit-only-btn">
                         <i class="fa fa-pencil"></i>
                     </button>
                 </div>
@@ -88,7 +89,7 @@
                         <h3 class="text-gray-500 text-sm font-medium">核心目标</h3>
                         <p id="main-goal" class="text-lg font-bold mt-1">完成学业任务，培养自律习惯</p>
                     </div>
-                    <button id="edit-goal" class="text-primary hover:text-primary/80 transition-colors edit-only">
+                    <button id="edit-goal" class="text-primary hover:text-primary/80 transition-colors edit-only-btn">
                         <i class="fa fa-pencil"></i>
                     </button>
                 </div>
@@ -128,13 +129,13 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
             <div class="flex gap-3">
-                <button id="add-row" class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only">
+                <button id="add-row" class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only-btn">
                     <i class="fa fa-plus"></i><span>添加时间段</span>
                 </button>
-                <button id="reset-schedule" class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only">
+                <button id="reset-schedule" class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only-btn">
                     <i class="fa fa-refresh"></i><span>重置计划</span>
                 </button>
-                <button id="change-pwd" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only">
+                <button id="change-pwd" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only-btn">
                     <i class="fa fa-key"></i><span>修改密码</span>
                 </button>
             </div>
@@ -142,7 +143,7 @@
                 <button id="export-json" class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors">
                     <i class="fa fa-download"></i><span>导出本地备份</span>
                 </button>
-                <label for="import-json" class="cursor-pointer bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only">
+                <label for="import-json" class="cursor-pointer bg-secondary hover:bg-secondary/90 text-white px-5 py-2 rounded-md flex items-center space-x-2 transition-colors edit-only-btn">
                     <i class="fa fa-upload"></i><span>导入本地文件</span>
                     <input id="import-json" type="file" accept=".json" class="hidden">
                 </label>
@@ -152,11 +153,11 @@
         <div class="bg-white rounded-lg shadow p-6 mb-8">
             <h3 class="text-xl font-bold mb-4 flex items-center"><i class="fa fa-info-circle text-primary mr-2"></i>使用说明</h3>
             <ul class="space-y-2 text-gray-700">
-                <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>表格默认锁定，输入密码解锁后才能编辑</li>
+                <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>表格默认锁定，只有密码校验通过解锁后才能修改内容</li>
+                <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>修复安全漏洞：即使修改页面CSS样式，也无法绕过解锁修改数据，所有修改逻辑内部强制校验权限</li>
                 <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>密码SHA256哈希存储，无明文泄露风险</li>
                 <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>保存后自动同步数据+密码哈希到GitHub仓库</li>
-                <li class="flex items-start"><i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>更换设备打开页面自动拉取云端最新计划</li>
-                <li class="flex items-start"><i class="fa fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>仅供私人使用，不要公开分享网站链接</li>
+                <li class="flex items-start"><i class="fa fa-exclamation-triangle text-red-500 mt-1 mr-2"></i>仅供私人使用，不要公开分享网站链接，防止Token泄露</li>
             </ul>
         </div>
     </main>
@@ -199,7 +200,7 @@
         // ====================== 【必须修改此处】GitHub仓库配置 ======================
         const GITHUB_CONFIG = {
             owner: "zhaohairuiour",
-            repo: "holoday-plan",
+            repo: "holiday-plan",
             fileName: "data.json",
             token: "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"
         };
@@ -209,8 +210,8 @@
         function getPwdHash(plainText) {
             return CryptoJS.SHA256(plainText).toString();
         }
-        // 初始默认密码 123456，云端会覆盖
-        const DEFAULT_PLAIN_PWD = "zdl810916ZDL";
+        // 初始默认密码 123456，云端data.json会覆盖
+        const DEFAULT_PLAIN_PWD = "123456";
         const DEFAULT_HASH = getPwdHash(DEFAULT_PLAIN_PWD);
 
         // 全局状态
@@ -220,13 +221,13 @@
         let progressData = { completed: 65, total: 100 };
         let isUnlocked = false;
         let correctPwdHash = DEFAULT_HASH;
-        let fileSha = null; // 云端data.json文件SHA，用于提交更新
+        let fileSha = null;
 
         // DOM元素
         const tableMask = document.getElementById('table-lock-mask');
         const unlockBtn = document.getElementById('unlock-btn');
         const lockBtn = document.getElementById('lock-btn');
-        const editBtns = document.querySelectorAll('.edit-only');
+        const editOnlyBtns = document.querySelectorAll('.edit-only-btn');
         const pwdModal = document.getElementById('pwd-modal');
         const pwdInput = document.getElementById('pwd-input');
         const pwdError = document.getElementById('pwd-error');
@@ -239,6 +240,7 @@
         const newPwdError = document.getElementById('newpwd-error');
         const newPwdCancel = document.getElementById('newpwd-cancel');
         const newPwdConfirm = document.getElementById('newpwd-confirm');
+        const scheduleBody = document.getElementById("schedule-body");
 
         // 初始化图表
         function initChart() {
@@ -257,7 +259,6 @@
         }
 
         // ====================== GitHub云端同步核心函数 ======================
-        // 拉取云端data.json
         async function loadCloudData() {
             try {
                 const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.fileName}`;
@@ -270,7 +271,6 @@
                 const rawContent = atob(resJson.content);
                 const cloudData = JSON.parse(rawContent);
 
-                // 覆盖本地全部数据与密码哈希
                 weekdayData = cloudData.weekday;
                 weekendData = cloudData.weekend;
                 correctPwdHash = cloudData.pwdHash;
@@ -288,9 +288,7 @@
             }
         }
 
-        // 保存数据到GitHub云端 + 本地localStorage
         async function saveAllToCloud() {
-            // 组装完整云端数据包（包含密码哈希）
             const cloudSaveData = {
                 weekday: weekdayData,
                 weekend: weekendData,
@@ -301,7 +299,6 @@
                 updateTime: new Date().toLocaleString()
             };
 
-            // 本地缓存同步
             localStorage.setItem('summerScheduleWeekday', JSON.stringify(weekdayData));
             localStorage.setItem('summerScheduleWeekend', JSON.stringify(weekendData));
             localStorage.setItem('summerScheduleProgress', JSON.stringify(progressData));
@@ -311,7 +308,6 @@
                 showToast("⚠️ 未获取云端文件，仅保存本地");
                 return;
             }
-
             try {
                 const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.fileName}`;
                 await fetch(url, {
@@ -329,11 +325,10 @@
                 showToast("✅ 本地+云端同步保存成功");
             } catch (err) {
                 console.error("云端同步失败", err);
-                showToast("⚠️ 本地保存成功，云端同步失败，请检查Token/仓库权限");
+                showToast("⚠️ 本地保存成功，云端同步失败，请检查Token");
             }
         }
 
-        // 加载本地默认模板（云端无文件时使用）
         function loadLocalBaseData() {
             weekdayData = [
                 {id:1,time_period:'上午',weekday_activity:'',notes:''},
@@ -362,33 +357,42 @@
             initChart();
         }
 
-        // 加载本地安全配置（解锁状态）
         function loadSecurityConfig() {
             const savedUnlock = localStorage.getItem('editorUnlock');
             if(savedUnlock === 'true') unlockEditor();
+            updateButtonState();
         }
 
-        // 解锁编辑权限
+        // 更新按钮样式
+        function updateButtonState() {
+            if(isUnlocked){
+                tableMask.classList.add('hidden');
+                unlockBtn.classList.add('hidden');
+                lockBtn.classList.remove('hidden');
+                editOnlyBtns.forEach(el=>el.classList.remove('btn-disabled'));
+            }else{
+                tableMask.classList.remove('hidden');
+                unlockBtn.classList.remove('hidden');
+                lockBtn.classList.add('hidden');
+                editOnlyBtns.forEach(el=>el.classList.add('btn-disabled'));
+            }
+        }
+
         function unlockEditor() {
             isUnlocked = true;
-            tableMask.classList.add('hidden');
-            unlockBtn.classList.add('hidden');
-            lockBtn.classList.remove('hidden');
-            editBtns.forEach(el=>el.classList.remove('opacity-50', 'pointer-events-none'));
             localStorage.setItem('editorUnlock', 'true');
+            updateButtonState();
+            showToast("解锁成功，现在可以编辑计划表");
         }
 
-        // 锁定编辑权限
         function lockEditor() {
             isUnlocked = false;
-            tableMask.classList.remove('hidden');
-            unlockBtn.classList.remove('hidden');
-            lockBtn.classList.add('hidden');
-            editBtns.forEach(el=>el.classList.add('opacity-50', 'pointer-events-none'));
             localStorage.setItem('editorUnlock', 'false');
+            updateButtonState();
+            showToast("已锁定编辑");
         }
 
-        // 弹出密码输入框
+        // 弹窗逻辑
         function openPwdModal() {
             pwdModal.classList.replace('hidden','flex');
             pwdInput.value = '';
@@ -397,14 +401,12 @@
         }
         function closePwdModal() { pwdModal.classList.replace('flex','hidden'); }
 
-        // 校验密码
         function checkPassword() {
             const inputVal = pwdInput.value.trim();
             const inputHash = getPwdHash(inputVal);
             if(inputHash === correctPwdHash) {
                 closePwdModal();
                 unlockEditor();
-                showToast('解锁成功，可编辑计划表');
             } else {
                 pwdError.classList.remove('hidden');
                 pwdInput.value = '';
@@ -412,7 +414,6 @@
             }
         }
 
-        // 修改密码弹窗
         function openNewPwdModal() {
             newPwdModal.classList.replace('hidden','flex');
             newPwd1.value = '';
@@ -422,7 +423,6 @@
         }
         function closeNewPwdModal() { newPwdModal.classList.replace('flex','hidden'); }
 
-        // 保存新密码并同步云端
         async function saveNewPassword() {
             const p1 = newPwd1.value.trim();
             const p2 = newPwd2.value.trim();
@@ -442,9 +442,8 @@
             showToast("新密码已保存并同步云端，请记住密码");
         }
 
-        // 渲染表格
+        // 渲染表格：去掉DOM上绑定的点击事件，只渲染静态文本
         function renderSchedule() {
-            const scheduleBody = document.getElementById('schedule-body');
             scheduleBody.innerHTML = '';
             const data = currentSchedule === 'weekday' ? weekdayData : weekendData;
             data.forEach(item => {
@@ -457,59 +456,67 @@
                 } else {
                     row.innerHTML = `
                         <td class="col-span-3 time-cell">
-                            <div class="editable time-period ${isUnlocked?'':'pointer-events-none opacity-60'}" data-field="time_period" data-id="${item.id}">${item.time_period||''}</div>
+                            <div class="editable-time time-period" data-field="time_period" data-id="${item.id}">${item.time_period||''}</div>
                         </td>
                         <td class="col-span-8 activity-cell">
-                            <div class="editable activity ${isUnlocked?'':'pointer-events-none opacity-60'}" data-field="${currentSchedule==='weekday'?'weekday_activity':'weekend_activity'}" data-id="${item.id}">${currentSchedule==='weekday'?item.weekday_activity||'':item.weekend_activity||''}</div>
+                            <div class="editable-content activity" data-field="${currentSchedule==='weekday'?'weekday_activity':'weekend_activity'}" data-id="${item.id}">${currentSchedule==='weekday'?item.weekday_activity||'':item.weekend_activity||''}</div>
                         </td>
                         <td class="col-span-1 text-center p-2">
-                            <button class="delete-row text-red-500 hover:text-red-700 transition-colors ${isUnlocked?'':'pointer-events-none opacity-40'}" data-id="${item.id}"><i class="fa fa-trash"></i></button>
+                            <button class="delete-btn text-red-500 hover:text-red-700 transition-colors" data-id="${item.id}">
+                                <i class="fa fa-trash"></i>
+                            </button>
                         </td>
                     `;
                 }
                 scheduleBody.appendChild(row);
             });
-            attachEditListeners();
-            attachDeleteListeners();
         }
 
-        function attachEditListeners() {
-            document.querySelectorAll('.editable').forEach(el=>{
-                el.onclick = function() {
-                    if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
-                    const field = this.dataset.field;
-                    const id = this.dataset.id;
-                    const val = this.textContent.trim();
-                    const input = document.createElement('input');
-                    input.className = 'edit-input';
-                    input.value = val;
-                    this.innerHTML = '';
-                    this.appendChild(input);
-                    input.focus();
-                    input.onblur = ()=>{
-                        const nv = input.value.trim();
-                        updateData(id, field, nv);
-                        this.textContent = nv;
-                    }
-                    input.onkeydown = (e)=>{
-                        if(e.key === 'Enter') {
-                            const nv = input.value.trim();
-                            updateData(id, field, nv);
-                            this.textContent = nv;
-                        }
+        // ==========核心修复：统一事件委托，执行操作前强制校验解锁状态==========
+        scheduleBody.addEventListener('click', async function(e){
+            // 编辑时间段和内容
+            const editDiv = e.target.closest(".editable-time, .editable-content");
+            if(editDiv){
+                if(!isUnlocked){
+                    showToast("⚠️请先解锁编辑，密码校验通过后才可以修改");
+                    return;
+                }
+                const field = editDiv.dataset.field;
+                const id = editDiv.dataset.id;
+                const oldText = editDiv.textContent.trim();
+                const input = document.createElement("input");
+                input.className = "edit-input";
+                input.value = oldText;
+                editDiv.innerHTML = "";
+                editDiv.appendChild(input);
+                input.focus();
+                // 失去焦点保存
+                input.onblur = ()=>{
+                    const newVal = input.value.trim();
+                    updateData(id, field, newVal);
+                    editDiv.textContent = newVal;
+                }
+                input.onkeydown = (ev)=>{
+                    if(ev.key === "Enter"){
+                        const newVal = input.value.trim();
+                        updateData(id, field, newVal);
+                        editDiv.textContent = newVal;
                     }
                 }
-            })
-        }
-        function attachDeleteListeners() {
-            document.querySelectorAll('.delete-row').forEach(btn=>{
-                btn.onclick = function() {
-                    if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
-                    const id = this.dataset.id;
-                    if(confirm('确定删除该时间段？')) deleteRow(id);
+            }
+            // 删除按钮
+            const delBtn = e.target.closest(".delete-btn");
+            if(delBtn){
+                if(!isUnlocked){
+                    showToast("⚠️请先解锁编辑");
+                    return;
                 }
-            })
-        }
+                const id = delBtn.dataset.id;
+                if(confirm("确定删除该时间段？")){
+                    deleteRow(id);
+                }
+            }
+        })
 
         function updateData(id, field, value) {
             const data = currentSchedule === 'weekday' ? weekdayData : weekendData;
@@ -527,7 +534,10 @@
             renderSchedule();
         }
         function addNewRow() {
-            if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
+            if(!isUnlocked){
+                showToast("⚠️请先解锁编辑");
+                return;
+            }
             const newId = currentSchedule === 'weekday' ? weekdayData.length+1 : weekendData.length+1;
             const newRow = {id:newId,time_period:'新时间段',weekday_activity:'填写安排',weekend_activity:'填写安排',notes:''};
             currentSchedule === 'weekday' ? weekdayData.push(newRow) : weekendData.push(newRow);
@@ -560,7 +570,10 @@
             renderSchedule();
         }
         function resetSchedule() {
-            if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
+            if(!isUnlocked){
+                showToast("⚠️请先解锁编辑");
+                return;
+            }
             if(confirm('确定重置所有计划？云端数据也会被覆盖！')) {
                 localStorage.clear();
                 loadLocalBaseData();
@@ -584,7 +597,10 @@
             showToast('本地备份文件已下载');
         }
         async function importData(file) {
-            if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
+            if(!isUnlocked){
+                showToast("⚠️请先解锁编辑");
+                return;
+            }
             const reader = new FileReader();
             reader.onload = async e=>{
                 try{
@@ -603,7 +619,10 @@
             reader.readAsText(file);
         }
         function editPeriod() {
-            if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
+            if(!isUnlocked){
+                showToast("⚠️请先解锁编辑");
+                return;
+            }
             const curr = document.getElementById('schedule-period').textContent;
             const newVal = prompt('修改暑假周期',curr);
             if(newVal?.trim()) {
@@ -612,7 +631,10 @@
             }
         }
         function editGoal() {
-            if(!isUnlocked) { showToast('请先解锁编辑权限'); return; }
+            if(!isUnlocked){
+                showToast("⚠️请先解锁编辑");
+                return;
+            }
             const curr = document.getElementById('main-goal').textContent;
             const newVal = prompt('修改暑假核心目标',curr);
             if(newVal?.trim()) {
@@ -622,10 +644,9 @@
         }
         function printSchedule() { window.print(); }
 
-        // 绑定页面事件
+        // 绑定按钮点击事件
         document.addEventListener('DOMContentLoaded', async ()=>{
             loadSecurityConfig();
-            // 页面初始化自动拉取云端数据
             await loadCloudData();
 
             unlockBtn.onclick = openPwdModal;
@@ -634,7 +655,13 @@
             modalConfirm.onclick = checkPassword;
             pwdInput.onkeydown = e=>{if(e.key==='Enter') checkPassword();}
 
-            changePwdBtn.onclick = openNewPwdModal;
+            changePwdBtn.onclick = function(){
+                if(!isUnlocked){
+                    showToast("⚠️请先解锁编辑");
+                    return;
+                }
+                openNewPwdModal();
+            }
             newPwdCancel.onclick = closeNewPwdModal;
             newPwdConfirm.onclick = saveNewPassword;
             newPwd2.onkeydown = e=>{if(e.key==='Enter') saveNewPassword();}
@@ -655,7 +682,7 @@
 
             // 打印样式
             const printCss = document.createElement('style');
-            printCss.textContent = `@media print {header,#pwd-modal,#newpwd-modal,.edit-only,#unlock-btn,#lock-btn,.delete-row,#table-lock-mask{display:none!important;}body{background:#fff;}.bg-white{box-shadow:none;}}`;
+            printCss.textContent = `@media print {header,#pwd-modal,#newpwd-modal,.edit-only-btn,#unlock-btn,#lock-btn,.delete-btn,#table-lock-mask{display:none!important;}body{background:#fff;}.bg-white{box-shadow:none;}}`;
             document.head.appendChild(printCss);
         })
     </script>
